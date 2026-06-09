@@ -1,0 +1,77 @@
+/* Reset & Base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #1e293b; display: flex; flex-direction: column; min-height: 100vh;}
+
+.container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; width: 100%;}
+.container.small { max-width: 560px; }
+.container.large { max-width: 900px; }
+.container.devis { padding-bottom: 4rem; }
+
+h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; }
+h2 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 .75rem; color: #475569; }
+
+/* Cards & Layouts */
+.card { background: #fff; border-radius: 10px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 1.25rem; }
+.box { background: #fff; border-radius: 10px; padding: 2rem 2.5rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.08); max-width: 400px; margin: 4rem auto; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Forms */
+.field { margin-bottom: 1.25rem; }
+label { display: block; font-size: .85rem; font-weight: 500; margin-bottom: .35rem; color: #475569; }
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=datetime-local], select {
+    width: 100%; padding: .6rem .85rem; border: 1px solid #e2e8f0;
+    border-radius: 6px; font-size: .9rem; font-family: inherit; background: #fff; transition: border-color .15s;
+}
+input:focus, select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+
+/* Buttons */
+.actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+.btn { display: inline-block; padding: .55rem 1.4rem; border-radius: 6px; font-size: .9rem; border: none; cursor: pointer; font-family: inherit; text-decoration: none; text-align: center; }
+.btn-primary   { background: #2563eb; color: #fff; font-weight: 500; }
+.btn-secondary { background: #f1f5f9; color: #475569; }
+.btn-warning   { background: #f59e0b; color: #fff; }
+.btn-danger    { background: #ef4444; color: #fff; }
+.btn:hover { opacity: .87; }
+.btn-add { display: inline-flex; align-items: center; gap: 6px; margin-top: .75rem; padding: .45rem 1rem; border: 1px dashed #cbd5e1; border-radius: 6px; background: none; color: #64748b; font-size: .85rem; cursor: pointer; font-family: inherit; }
+.btn-add:hover { background: #f8fafc; border-color: #94a3b8; color: #1e293b; }
+.btn-remove { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.1rem; padding: 0 4px; }
+.btn-remove:hover { color: #dc2626; }
+
+/* Alerts & Errors */
+.alert { padding: .75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: .88rem; }
+.alert-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.err, .field-error { color: #dc2626; font-size: .78rem; margin-top: .3rem; display: block; }
+input.error { border-color: #dc2626; }
+.hint { font-size: .78rem; color: #94a3b8; margin-top: .25rem; }
+
+/* Tables */
+table, .details-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+th { background: #f8fafc; text-align: left; padding: .75rem 1rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: #64748b; border-bottom: 1px solid #f1f5f9; }
+td { padding: .85rem 1rem; border-top: 1px solid #f1f5f9; font-size: .9rem; vertical-align: middle; }
+tr:hover td { background: #fafcff; }
+
+/* Devis Details Table Specifics */
+.details-table input { padding: .45rem .6rem; }
+.col-libelle  { width: 40%; }
+.col-qte      { width: 13%; }
+.col-pu       { width: 16%; }
+.col-total    { width: 16%; text-align: right; font-weight: 500; color: #0f766e; }
+.col-action   { width: 5%;  text-align: center; }
+
+/* Specific Components */
+.demande-info { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.demande-info .di-label { font-size: .75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: .04em; }
+.demande-info .di-val   { font-size: .92rem; font-weight: 500; color: #1e293b; margin-top: 2px; }
+
+.total-row { display: flex; justify-content: flex-end; margin-top: .75rem; padding-right: .5rem; }
+.total-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: .6rem 1.25rem; text-align: right; }
+.total-box .tl { font-size: .78rem; color: #166534; text-transform: uppercase; letter-spacing: .04em; }
+.total-box .tv { font-size: 1.25rem; font-weight: 700; color: #166534; margin-top: 2px; }
+
+.sticky-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e2e8f0; padding: .85rem 2rem; display: flex; gap: 10px; align-items: center; box-shadow: 0 -2px 8px rgba(0,0,0,.06); }
+
+.badge { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: .75rem; font-weight: 500; }
+.badge-admin { background: #ede9fe; color: #5b21b6; }
+.badge-user  { background: #f0fdf4; color: #166534; }
+form.inline { display: inline; }

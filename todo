@@ -1,0 +1,25 @@
+interface gestion demande statut(afaka accedena tsy misy demande)
+    -info demande
+    -date(raha null de date du jour avec h sy mn)
+    -statut(liste deroulante)
+
+interface modif
+    -demande: safidiana liste deroulante
+    -date(pre-rempli rehefa misafidy statut de afaka ovaina)
+    -observation
+    -statut(izay statut rehetra nanananle demande anaty liste deroulante)
+modifiena ny date sy observation
+
+ampiana colonne DT sy obs ao amn demandeStatut
+DT: duree travaillee entre changement de statut en minute
+-8h-16h ihany miasa; tsy isaina raha mandalo week-end
+
+Table parametre(
+    idStatut1
+    idStatut2
+    duree
+    alerte
+)
+
+liste demande + alerte pour chaque demande
+api mandray demande sy mamerina liste alerte

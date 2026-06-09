@@ -22,8 +22,11 @@ public class Parametre {
     @JoinColumn(name = "id_statut2", nullable = false)
     private Statut statutCible;
 
-    @Column(name = "duree", nullable = false)
-    private Long duree;
+    @Column(name = "debut", nullable = false)
+    private Long debut;
+
+    @Column(name = "fin", nullable = false)
+    private Long fin;
 
     @Column(name = "couleur")
     private String couleur;

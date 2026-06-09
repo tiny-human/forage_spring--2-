@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ParametreRepository extends JpaRepository<Parametre, Long> {
 
-    List<Parametre> findByStatutSourceIdOrderByDureeAscIdAsc(Long idStatutSource);
+    List<Parametre> findByStatutSourceIdOrderByDebutAscFinAscIdAsc(Long idStatutSource);
 
-    List<Parametre> findByStatutSourceIdAndStatutCibleIdOrderByDureeAscIdAsc(Long idStatutSource, Long idStatutCible);
+    List<Parametre> findByStatutSourceIdAndStatutCibleIdOrderByDebutAscFinAscIdAsc(Long idStatutSource, Long idStatutCible);
 }

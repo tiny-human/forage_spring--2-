@@ -12,17 +12,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AlerteDemandeService {
+
+    private static final LocalTime DEBUT_JOURNEE_TRAVAIL = LocalTime.of(8, 0);
+    private static final LocalTime FIN_JOURNEE_TRAVAIL = LocalTime.of(16, 0);
 
     private final DemandeRepository demandeRepo;
     private final DemandeStatutRepository demandeStatutRepo;
@@ -40,6 +45,7 @@ public class AlerteDemandeService {
             return alertes;
         }
 
+        Long dureeTotaleMinutes = calculerDureeTotaleSiForageTermine(historique);
         List<Parametre> parametres = parametreRepo.findAll();
         for (Parametre parametre : parametres) {
             if (parametre.getStatutSource() == null || parametre.getStatutCible() == null) {
@@ -57,34 +63,159 @@ public class AlerteDemandeService {
                 continue;
             }
 
-            long minutesEcoulees = ChronoUnit.MINUTES.between(source.getDateStatut(), cible.getDateStatut());
-            long duree = parametre.getDuree() != null ? parametre.getDuree() : 0L;
-            if (minutesEcoulees < duree) {
+            long minutesEcoulees = calculerMinutesEcoulees(historique, source, cible);
+            long debut = parametre.getDebut() != null ? parametre.getDebut() : 0L;
+            long fin = parametre.getFin() != null ? parametre.getFin() : Long.MAX_VALUE;
+            if (minutesEcoulees < debut || minutesEcoulees > fin) {
                 continue;
             }
 
             String statutSource = parametre.getStatutSource().getLibelle();
             String statutCible = parametre.getStatutCible().getLibelle();
-            String message = String.format(
-                    "La transition de \"%s\" vers \"%s\" a pris %d minute(s) et déclenche une alerte %s.",
-                    statutSource,
-                    statutCible,
-                    minutesEcoulees,
-                    parametre.getCouleur());
 
             alertes.add(new AlerteParametreDTO(
                     parametre.getId(),
+                    demande.getId(),
                     parametre.getCouleur(),
                     statutSource,
                     statutCible,
-                    duree,
+                    debut,
+                    fin,
                     minutesEcoulees,
-                    Math.max(0L, duree - minutesEcoulees),
-                    true,
-                    message));
+                    Math.max(0L, fin - minutesEcoulees),
+                    dureeTotaleMinutes,
+                    true));
+        }
+
+        if (alertes.isEmpty() && dureeTotaleMinutes != null) {
+            alertes.add(new AlerteParametreDTO(
+                    null,
+                    demande.getId(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    dureeTotaleMinutes,
+                    false));
         }
 
         return alertes;
+    }
+
+    private Long calculerDureeTotaleSiForageTermine(List<DemandeStatut> historique) {
+        if (historique.isEmpty()) {
+            return null;
+        }
+
+        DemandeStatut statutCourant = historique.get(historique.size() - 1);
+        if (!estForageTermine(statutCourant)) {
+            return null;
+        }
+
+        long total = 0L;
+        boolean dtDisponible = false;
+        for (DemandeStatut ds : historique) {
+            if (ds.getDureeTravailleeMinutes() != null) {
+                total += Math.max(0L, ds.getDureeTravailleeMinutes());
+                dtDisponible = true;
+            }
+            if (memeLigne(ds, statutCourant)) {
+                break;
+            }
+        }
+
+        if (dtDisponible) {
+            return total;
+        }
+
+        DemandeStatut premierStatut = historique.get(0);
+        return calculerMinutesTravail(premierStatut.getDateStatut(), statutCourant.getDateStatut());
+    }
+
+    private boolean estForageTermine(DemandeStatut demandeStatut) {
+        if (demandeStatut.getStatut() == null) {
+            return false;
+        }
+
+        String code = demandeStatut.getStatut().getCode();
+        if (code != null && code.equalsIgnoreCase("FOR_FIN")) {
+            return true;
+        }
+
+        String libelle = demandeStatut.getStatut().getLibelle();
+        return libelle != null && libelle.equalsIgnoreCase("Forage termine");
+    }
+
+    private long calculerMinutesEcoulees(List<DemandeStatut> historique, DemandeStatut source, DemandeStatut cible) {
+        long total = 0L;
+        boolean dansIntervalle = false;
+        boolean dtDisponible = false;
+
+        for (DemandeStatut ds : historique) {
+            if (!dansIntervalle) {
+                dansIntervalle = memeLigne(ds, source);
+                continue;
+            }
+
+            if (ds.getDureeTravailleeMinutes() != null) {
+                total += Math.max(0L, ds.getDureeTravailleeMinutes());
+                dtDisponible = true;
+            }
+
+            if (memeLigne(ds, cible)) {
+                return dtDisponible
+                        ? total
+                        : calculerMinutesTravail(source.getDateStatut(), cible.getDateStatut());
+            }
+        }
+
+        return calculerMinutesTravail(source.getDateStatut(), cible.getDateStatut());
+    }
+
+    private long calculerMinutesTravail(LocalDateTime debut, LocalDateTime fin) {
+        if (debut == null || fin == null || !fin.isAfter(debut)) {
+            return 0L;
+        }
+
+        long total = 0L;
+        LocalDate date = debut.toLocalDate();
+        LocalDate dateFin = fin.toLocalDate();
+
+        while (!date.isAfter(dateFin)) {
+            if (estJourOuvrable(date)) {
+                LocalDateTime debutJour = LocalDateTime.of(date, DEBUT_JOURNEE_TRAVAIL);
+                LocalDateTime finJour = LocalDateTime.of(date, FIN_JOURNEE_TRAVAIL);
+                LocalDateTime debutEffectif = max(debut, debutJour);
+                LocalDateTime finEffectif = min(fin, finJour);
+
+                if (finEffectif.isAfter(debutEffectif)) {
+                    total += ChronoUnit.MINUTES.between(debutEffectif, finEffectif);
+                }
+            }
+            date = date.plusDays(1);
+        }
+
+        return total;
+    }
+
+    private boolean estJourOuvrable(LocalDate date) {
+        DayOfWeek jour = date.getDayOfWeek();
+        return jour != DayOfWeek.SATURDAY && jour != DayOfWeek.SUNDAY;
+    }
+
+    private LocalDateTime max(LocalDateTime a, LocalDateTime b) {
+        return a.isAfter(b) ? a : b;
+    }
+
+    private LocalDateTime min(LocalDateTime a, LocalDateTime b) {
+        return a.isBefore(b) ? a : b;
+    }
+
+    private boolean memeLigne(DemandeStatut a, DemandeStatut b) {
+        return a.getId() != null && a.getId().equals(b.getId());
     }
 
     private DemandeStatut trouverPremiereOccurrence(List<DemandeStatut> historique, Long idStatut) {

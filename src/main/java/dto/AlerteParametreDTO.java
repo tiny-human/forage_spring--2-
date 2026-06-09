@@ -11,12 +11,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AlerteParametreDTO {
     private Long parametreId;
+    private Long idDemande;
     private String couleur;
     private String statutSource;
     private String statutCible;
-    private Long dureeMinutes;
+    private Long debut;
+    private Long fin;
     private Long minutesEcoulees;
     private Long minutesRestantes;
+    private Long dureeTotaleMinutes;
     private Boolean declenchee;
-    private String message;
 }

@@ -52,16 +52,33 @@ function badgeCouleur(string $couleur): string
          . "font-size:.82em;font-weight:600;\">{$txt}</span>";
 }
 
+function heuresDepuisMinutes(int $minutes): string
+{
+    $heures = $minutes / 60;
+    $texte = number_format($heures, 2, ',', ' ');
+    return rtrim(rtrim($texte, '0'), ',') . ' h';
+}
+
 function ligneAlerte(array $alerte): string
 {
+    $debut = $alerte['debut'] ?? null;
+    $fin = $alerte['fin'] ?? null;
+    $intervalle = ($debut !== null && $fin !== null)
+        ? $debut . ' - ' . $fin . ' min'
+        : '';
+    $minutesEcoulees = $alerte['minutesEcoulees'] ?? null;
+    $dureeTotale = $alerte['dureeTotaleMinutes'] ?? null;
+    $couleur = (string)($alerte['couleur'] ?? '');
+
     ob_start(); ?>
     <tr>
         <td><?= h((string)($alerte['idDemande'] ?? '')) ?></td>
         <td><?= h($alerte['statutSource'] ?? '') ?></td>
         <td><?= h($alerte['statutCible']  ?? '') ?></td>
-        <td><?= h((string)($alerte['dureeMinutes'] ?? '')) ?> min</td>
-        <td><?= h((string)($alerte['minutesEcoulees'] ?? '')) ?> min</td>
-        <td><?= badgeCouleur((string)($alerte['couleur'] ?? '')) ?></td>
+        <td><?= h((string)$intervalle) ?></td>
+        <td><?= $minutesEcoulees !== null ? h((string)$minutesEcoulees) . ' min' : '' ?></td>
+        <td><?= $dureeTotale !== null ? h(heuresDepuisMinutes((int)$dureeTotale)) : '' ?></td>
+        <td><?= $couleur !== '' ? badgeCouleur($couleur) : '' ?></td>
     </tr>
     <?php return ob_get_clean();
 }
@@ -110,7 +127,7 @@ function ligneAlerte(array $alerte): string
 </head>
 <body>
 <div class="wrap">
-    <h1>Alertes demandes</h1>
+    <h1>Alertes demandes <span><b>ETU004069</b></span></h1>
 
     <!--Formulaire filtre-->
     <div class="filtre">
@@ -154,8 +171,9 @@ function ligneAlerte(array $alerte): string
                             <th>ID demande</th>
                             <th>Statut source</th>
                             <th>Statut cible</th>
-                            <th>Seuil</th>
+                            <th>Intervalle</th>
                             <th>Durée écoulée</th>
+                            <th>Durée totale</th>
                             <th>Couleur</th>
                         </tr>
                     </thead>
@@ -197,8 +215,9 @@ function ligneAlerte(array $alerte): string
                             <th>ID demande</th>
                             <th>Statut source</th>
                             <th>Statut cible</th>
-                            <th>Seuil</th>
+                            <th>Intervalle</th>
                             <th>Durée écoulée</th>
+                            <th>Durée totale</th>
                             <th>Couleur</th>
                         </tr>
                     </thead>

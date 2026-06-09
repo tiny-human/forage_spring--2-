@@ -83,17 +83,12 @@ CREATE TABLE parametre(
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_statut1 INT NOT NULL,
     id_statut2 INT NOT NULL,
-    duree BIGINT NOT NULL,
+    debut BIGINT NOT NULL,
+    fin BIGINT NOT NULL,
     couleur VARCHAR(20),
     CONSTRAINT fk_param_statut1 FOREIGN KEY (id_statut1) REFERENCES statut(id),
     CONSTRAINT fk_param_statut2 FOREIGN KEY (id_statut2) REFERENCES statut(id)
 );
-
-INSERT INTO parametre (id_statut1, id_statut2, duree, couleur) VALUES
-(1, 2, 60, 'rouge');  
-(2, 3, 2880, 'bleue'),    
-(3, 3, 4320, 'orange'),  
-(4, 4, 4320, 'rouge');  
 
 INSERT INTO region (id, nom) VALUES
 (1, 'Analamanga'),
@@ -125,49 +120,24 @@ INSERT INTO client (id, nom, telephone, adresse) VALUES
 -- Statuts de demande
 INSERT INTO statut (libelle, code) VALUES
 ('Demande creee',       'DEM_CREE'),
-('Demande acceptee',    'DEM_ACCEPTEE'),
-('Forage commence',     'FOR_DEBUT'),
-('Suspendu',            'SUSPENDU'),
-('Forage termine',      'FOR_FIN'),
-('Demande rejetee',     'DEM_REJETEE'),
 ('Devis etude cree',    'DEV_ETU_CREE'),
 ('Devis etude refuse',  'DEV_ETU_REFUSE'),
 ('Devis etude annule',  'DEV_ETU_ANNULE'),
 ('Devis forage cree',   'DEV_FOR_CREE'),
 ('Devis forage refuse', 'DEV_FOR_REFUSE'),
-('Devis forage annule', 'DEV_FOR_ANNULE');
+('Devis forage annule', 'DEV_FOR_ANNULE'),
+('Forage commence',     'FOR_DEBUT'),
+('Forage termine',      'FOR_FIN');
+
+INSERT INTO parametre (id_statut1, id_statut2, debut, fin, couleur) VALUES
+(1, 7, 60, 600, 'rouge');
+(2, 3, 60, 2940, 'bleu'),
+(3, 3, 2940, 7260, 'orange'),
+(4, 4, 7260, 11580, 'rouge');
 
 INSERT INTO type_devis (id, libelle) VALUES
 (1, 'etude'),
 (2, 'forage');
-
-INSERT INTO demande (id, reference, id_client, lieu, date_demande, id_commune) VALUES
--- CORRECTION : 6 colonnes, 6 valeurs (supprimé la 7e valeur parasite)
-(1, 'DE001', 1, 'Terrain Avarabohitra',     '2026-05-01 09:15:00', 3),
-(2, 'DE002', 2, 'Pres du marche communal',  '2026-05-02 14:30:00', 4),
-(3, 'DE003', 3, 'Secteur agricole nord',    '2026-05-03 10:45:00', 5),
-(4, 'DE004', 4, 'Zone portuaire',           '2026-05-04 08:20:00', 7);
-
-INSERT INTO demande_statut (id, id_dm, id_statut, date_statut, dt) VALUES
--- DT est porté par la ligne du statut courant (temps écoulé depuis le statut précédent)
-(1, 1, 1, '2026-05-01 09:15:00', NULL),
-(2, 2, 1, '2026-05-02 14:30:00', NULL),
-(3, 2, 2, '2026-05-03 08:00:00', 1050),
-(4, 3, 1, '2026-05-03 10:45:00', NULL),
-(5, 3, 2, '2026-05-04 09:00:00', 1335),
-(6, 3, 3, '2026-05-05 11:10:00', 1570),
-(7, 4, 1, '2026-05-04 08:20:00', NULL),
-(8, 4, 4, '2026-05-06 16:30:00', 3370);
-
-INSERT INTO devis (id, id_demande, date_devis, id_type) VALUES
-(1, 1, '2026-05-02 11:00:00', 1),
-(2, 3, '2026-05-05 13:40:00', 2);
-
-INSERT INTO devis_detail (id, id_devis, libelle, quantite, pu) VALUES
-(1, 1, 'Etude hydrogeologique', 1,  250000),
-(2, 1, 'Forage 80m',            80, 18000),
-(3, 2, 'Tubage PVC',            60, 22000),
-(4, 2, 'Pompe immergee',        1,  650000);
 
 -- 1. Désactiver les contraintes de clés étrangères pour permettre la vidange
 SET FOREIGN_KEY_CHECKS = 0;
@@ -177,6 +147,7 @@ TRUNCATE TABLE devis_detail;
 TRUNCATE TABLE devis;
 TRUNCATE TABLE demande_statut;
 TRUNCATE TABLE demande;
+TRUNCATE TABLE parametre;
 TRUNCATE TABLE type_devis;
 TRUNCATE TABLE statut;
 TRUNCATE TABLE client;

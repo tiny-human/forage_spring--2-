@@ -27,6 +27,7 @@ dto/StatutCourantDTO.class
 service/DevisDetailsService.class
 dto/DevisDetailDTO.class
 model/Region.class
+service/CalculateurDureeTravail.class
 repository/StatutRepository.class
 controller/DemandeStatutController.class
 service/DemandeStatutService.class

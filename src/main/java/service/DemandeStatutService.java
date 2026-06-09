@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class DemandeStatutService {
         ds.setObservation(observation);
         ds.setDateStatut(dateEffective);
         ds.setDureeTravailleeMinutes(precedent != null
-            ? Math.max(0L, ChronoUnit.MINUTES.between(precedent.getDateStatut(), dateEffective))
+            ? CalculateurDureeTravail.calculerMinutes(precedent.getDateStatut(), dateEffective)
             : null);
         DemandeStatut saved = demandeStatutRepo.save(ds);
         recalculerDureeTravaillee(demande.getId());
@@ -89,8 +88,8 @@ public class DemandeStatutService {
             if (precedent == null) {
                 courant.setDureeTravailleeMinutes(null);
             } else {
-                long minutes = ChronoUnit.MINUTES.between(precedent.getDateStatut(), courant.getDateStatut());
-                courant.setDureeTravailleeMinutes(Math.max(0L, minutes));
+                courant.setDureeTravailleeMinutes(CalculateurDureeTravail.calculerMinutes(
+                        precedent.getDateStatut(), courant.getDateStatut()));
             }
             precedent = courant;
         }

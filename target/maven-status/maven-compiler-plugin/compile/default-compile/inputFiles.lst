@@ -35,6 +35,7 @@
 /home/itu/s4/web dynamique/forage_spring (2)/src/main/java/repository/StatutRepository.java
 /home/itu/s4/web dynamique/forage_spring (2)/src/main/java/repository/TypeDevisRepository.java
 /home/itu/s4/web dynamique/forage_spring (2)/src/main/java/service/AlerteDemandeService.java
+/home/itu/s4/web dynamique/forage_spring (2)/src/main/java/service/CalculateurDureeTravail.java
 /home/itu/s4/web dynamique/forage_spring (2)/src/main/java/service/DemandeService.java
 /home/itu/s4/web dynamique/forage_spring (2)/src/main/java/service/DemandeStatutService.java
 /home/itu/s4/web dynamique/forage_spring (2)/src/main/java/service/DevisDetailsService.java

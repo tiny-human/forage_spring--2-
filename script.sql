@@ -112,28 +112,32 @@ INSERT INTO commune (id, nom, id_district) VALUES
 (7, 'Toamasina',        5);
 
 INSERT INTO client (id, nom, telephone, adresse) VALUES
-(1, 'Rakoto Jean',           '0341200001', 'Lot II M 22 Antananarivo'),
-(2, 'Rasoanaivo Miora',      '0321200002', 'Itaosy Antananarivo'),
-(3, 'Andrianina Tiana',      '0331200003', 'Antsirabe Centre'),
-(4, 'Raharinirina Fara',     '0381200004', 'Toamasina Sud');
+(1, 'Rakoto',           '0341200001', 'Lot II M 22 Antananarivo');
+
 
 -- Statuts de demande
 INSERT INTO statut (libelle, code) VALUES
-('Demande creee',       'DEM_CREE'),
+('Dossier creee',       'DEM_CREE'),
 ('Devis etude cree',    'DEV_ETU_CREE'),
-('Devis etude refuse',  'DEV_ETU_REFUSE'),
-('Devis etude annule',  'DEV_ETU_ANNULE'),
+('Devis etude accepte',  'DEV_ETU_ACCEPTE'),
 ('Devis forage cree',   'DEV_FOR_CREE'),
-('Devis forage refuse', 'DEV_FOR_REFUSE'),
-('Devis forage annule', 'DEV_FOR_ANNULE'),
+('Devis forage accepte', 'DEV_FOR_ACCEPTE'),
 ('Forage commence',     'FOR_DEBUT'),
 ('Forage termine',      'FOR_FIN');
 
 INSERT INTO parametre (id_statut1, id_statut2, debut, fin, couleur) VALUES
-(1, 7, 60, 600, 'rouge');
-(2, 3, 60, 2940, 'bleu'),
-(3, 3, 2940, 7260, 'orange'),
-(4, 4, 7260, 11580, 'rouge');
+(1, 2, 480, 600, 'jaune'),
+(1, 2, 1440, 2880, 'rouge'),
+(2, 3, 240, 300, 'jaune'),
+(2, 3, 360, 480, 'rouge'),
+(3, 4, 60, 120, 'jaune'),
+(3, 4, 180, 240, 'rouge'),
+(4, 5, 240, 480, 'jaune'),
+(4, 5, 600, 720, 'rouge'),
+(5, 6, 1200, 1800, 'jaune'),
+(5, 6, 1801, 3600, 'rouge'),
+(6, 7, 3600, 4200, 'jaune'),
+(6, 7, 4800, 6000, 'rouge');
 
 INSERT INTO type_devis (id, libelle) VALUES
 (1, 'etude'),

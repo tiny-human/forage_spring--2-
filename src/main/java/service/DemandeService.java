@@ -45,13 +45,13 @@ public class DemandeService {
         
         demande = demandeRepo.save(demande);
 
-        Statut statutInitial = statutRepo.findByLibelle("Demande creee")
-                .orElseThrow(() -> new RuntimeException("Statut 'Demande creee' introuvable en base."));
+        Statut statutInitial = statutRepo.findByLibelle("Dossier creee")
+                .orElseThrow(() -> new RuntimeException("Statut 'Dossier creee' introuvable en base."));
 
         DemandeStatut ds = new DemandeStatut();
         ds.setDemande(demande);
         ds.setStatut(statutInitial);
-        ds.setDateStatut(LocalDateTime.now());
+        ds.setDateStatut(dto.getDateDemande());
         demandeStatutRepo.save(ds);
     }
 
